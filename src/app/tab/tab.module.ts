@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TabComponent} from './tab.component';
-import {MatTabsModule} from '@angular/material';
+import {MatListModule, MatTabsModule} from "@angular/material";
 import {HomeComponent} from './home/home.component';
 import {PerformanceComponent} from './performance/performance.component';
 import {NativeHardwareTestComponent} from './native-hardware-test/native-hardware-test.component';
@@ -16,6 +16,7 @@ import {FileComponent} from './native-hardware-test/file/file.component';
   imports: [
     CommonModule,
     MatTabsModule,
+    MatListModule,
     HttpClientModule,
     BrowserAnimationsModule,
     NoopAnimationsModule
