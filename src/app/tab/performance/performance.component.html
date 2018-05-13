@@ -1,0 +1,7 @@
+<div>
+  <div>Running time: {{runningTime}}</div>
+  <button (click)="runPerformanceTest()">Run Performance Test</button>
+  <div #performanceDataList *ngIf="isPerformanceTestRunning">
+    <div *ngFor="let data of performanceData">{{data}}</div>
+  </div>
+</div>
