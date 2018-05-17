@@ -1,5 +1,6 @@
 import {AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
 import {PerformanceService} from './performance.service';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-performance',
@@ -21,10 +22,14 @@ export class PerformanceComponent implements AfterViewChecked {
 
   constructor(private performanceService: PerformanceService,
               private changeDetector: ChangeDetectorRef) {
+    this.initPerformanceData();
+  }
+
+  private initPerformanceData() {
     for (let i = 0; i < 10000; i++) {
       this.performanceData.push('TestString' + Math.floor((Math.random() * 10000) + 1));
+      console.log(this.performanceData[i]);
     }
-    alert(this.performanceData.length + ' Testdaten erstellt');
   }
 
   ngAfterViewChecked(): void {
@@ -38,27 +43,22 @@ export class PerformanceComponent implements AfterViewChecked {
     }
   }
 
-  runPerformanceTest() {
-    this.runWarmUpPhase();
-    console.log('WarmUp Phase 1 has ended');
-    this.runWarmUpPhase();
-    console.log('WarmUp Phase 2 has ended');
-
+  resetFields() {
     this.performanceData = [];
+    this.isPerformanceTestRunning = false;
+    this.runningTime = 0;
+    this.changeDetector.markForCheck();
+    this.changeDetector.detectChanges();
+    this.initPerformanceData();
+  }
+
+  runPerformanceTest(data) {
     this.isPerformanceTestRunning = true;
-    this.performanceService.runPerformanceTest().subscribe((perfData) => {
+    this.performanceService.runPerformanceTest(this.performanceData).subscribe((perfData) => {
       console.log('Performance Test Started');
       this.startTime = new Date().getTime();
       this.performanceData = perfData;
     });
   }
-
-  runWarmUpPhase() {
-    this.performanceService.runWarmUpPhase().subscribe((warmUpData) => {
-      console.log('WarmUp Phase Started');
-      this.performanceData = warmUpData;
-    });
-  }
-
 
 }
