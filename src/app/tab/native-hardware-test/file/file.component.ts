@@ -1,4 +1,8 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {WindowRefService} from '../../window-ref.service';
+
+declare var cordova: any;
+
 
 @Component({
   selector: 'app-file',
@@ -7,40 +11,64 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 })
 export class FileComponent implements OnInit {
 
-  fileContent: string;
+  fileText: string;
+  logOb: any;
 
   @ViewChild('filecontent')
   public content: ElementRef;
 
-  constructor() {
+  constructor(private window: WindowRefService) {
   }
 
   ngOnInit() {
-
+    alert(cordova.file.dataDirectory);
+    const that = this;
+    this.window.nativeWindow.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (dir) {
+      alert('got main dir' + dir);
+      dir.getFile('testFile.txt', {create: true}, (file) => {
+        alert('got the file' + file);
+        that.logOb = file;
+        that.saveFile('Test Text');
+      });
+    });
   }
 
-  changeListener(event): void {
-    this.readThis(event.target);
+  private saveFile(fileText: string) {
+    if (!this.logOb) {
+      return;
+    }
+    const that = this;
+    this.fileText = fileText;
+    this.logOb.createWriter(function (fileWriter) {
+
+      // fileWriter.seek(fileWriter.length);
+      const blob = new Blob([that.fileText], {type: 'text/plain'});
+      fileWriter.write(blob);
+      alert('gepeichert');
+    }, () => {
+      alert('Speicherfehler');
+    });
   }
 
-  readThis(inputValue: any): void {
-    const file: File = inputValue.files[0];
-    const myReader: FileReader = new FileReader();
+  loadFile(inputValue: any): void {
+    const that = this;
+    this.logOb.file(function (file) {
+      const reader = new FileReader();
 
-    myReader.onloadend = (e) => {
-      // you can perform an action with readed data here
-      console.log(myReader.result);
-      this.fileContent = myReader.result;
-    };
+      reader.onloadend = function (e) {
+        that.fileText = this.result;
+        alert('READ ' + this.result);
+        that.content.nativeElement.value = that.fileText;
+      };
 
-    myReader.readAsText(file);
+      reader.readAsText(file);
+    }, () => {
+      alert('LESEFEHLER');
+    });
   }
 
-  saveToDevice() {
-    console.log('save');
-    const text = this.content.nativeElement.value;
-    const blob = new Blob([text], {type: 'text/plain'});
-    const url = window.URL.createObjectURL(blob);
-    window.open(url);
+  errorCallback(error) {
+    alert('ERROR: ' + error.code);
   }
 }
+

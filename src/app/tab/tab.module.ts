@@ -11,6 +11,8 @@ import {LocationComponent} from './native-hardware-test/location/location.compon
 import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {CameraComponent} from './native-hardware-test/camera/camera.component';
 import {FileComponent} from './native-hardware-test/file/file.component';
+import {WindowRefService} from "./window-ref.service";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   imports: [
@@ -19,13 +21,14 @@ import {FileComponent} from './native-hardware-test/file/file.component';
     MatListModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    NoopAnimationsModule
+    NoopAnimationsModule,
+    FormsModule
   ],
   declarations: [TabComponent, HomeComponent, PerformanceComponent,
     NativeHardwareTestComponent,
     LocationComponent, CameraComponent, FileComponent],
   exports: [TabComponent],
-  providers: [PerformanceService]
+  providers: [PerformanceService, WindowRefService]
 })
 export class TabModule {
 }
