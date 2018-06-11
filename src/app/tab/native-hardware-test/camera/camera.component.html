@@ -1,11 +1,7 @@
 <div>
   <h2>Kamera</h2>
   <div>
-    <video #video id="video" width="640" height="480" autoplay></video>
-  </div>
-  <div>
     <button id="snap" (click)="capture()">Foto aufnehmen</button>
   </div>
-  <h2>Letztes Foto</h2>
-  <canvas #canvas id="canvas" width="640" height="480"></canvas>
+  <img [src]="snap"/>
 </div>
